@@ -8,7 +8,7 @@ Summary:	A repository of test results
 Summary(pl.UTF-8):	Repozytorium wyników testów
 Name:		python-testrepository
 Version:	0.0.20
-Release:	1
+Release:	2
 License:	Apache v2.0 or BSD
 Group:		Libraries/Python
 #Source0Download: https://pypi.python.org/simple/testrepository/
