@@ -11,7 +11,7 @@ Version:	0.0.20
 Release:	3
 License:	Apache v2.0 or BSD
 Group:		Libraries/Python
-#Source0Download: https://pypi.python.org/simple/testrepository/
+#Source0Download: https://pypi.org/simple/testrepository/
 Source0:	https://pypi.python.org/packages/source/t/testrepository/testrepository-%{version}.tar.gz
 # Source0-md5:	f648b0aceeca4fcd5f8a62eeedea289b
 URL:		https://launchpad.net/testrepository
@@ -22,9 +22,12 @@ BuildRequires:	python-modules >= 1:2.6
 BuildRequires:	python-setuptools
 %if %{with tests}
 BuildRequires:	python-bzr
+BuildRequires:	python-fixtures
 BuildRequires:	python-pytz
+BuildRequires:	python-subunit >= 0.0.18
 BuildRequires:	python-testresources
 BuildRequires:	python-testscenarios
+BuildRequires:	python-testtools >= 0.9.30
 %endif
 %endif
 %if %{with python3}
@@ -33,15 +36,15 @@ BuildRequires:	python3-setuptools
 # no bzr for python3, so no tests
 %if %{with python3_tests}
 BuildRequires:	python3-bzr
+BuildRequires:	python3-fixtures
 BuildRequires:	python3-pytz
+BuildRequires:	python3-subunit >= 0.0.18
 BuildRequires:	python3-testresources
 BuildRequires:	python3-testscenarios
+BuildRequires:	python3-testtools >= 0.9.30
 %endif
 %endif
-Requires:	python-fixtures
 Requires:	python-modules >= 1:2.6
-Requires:	python-subunit >= 0.0.18
-Requires:	python-testtools >= 0.9.30
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -74,10 +77,7 @@ przekonwertowane do takiego strumienia).
 Summary:	A repository of test results
 Summary(pl.UTF-8):	Repozytorium wyników testów
 Group:		Libraries/Python
-Requires:	python3-fixtures
 Requires:	python3-modules >= 1:3.2
-Requires:	python3-subunit >= 0.0.18
-Requires:	python3-testtools >= 0.9.30
 
 %description -n python3-testrepository
 This project provides a database of test results which can be used as
@@ -110,12 +110,12 @@ przekonwertowane do takiego strumienia).
 %build
 %if %{with python2}
 %py_build
-%{?with_tests:%{__python} testr init && %{__python} testr run --parallel}
+%{?with_tests:%{__python} testr init && %{__python} testr run}
 %endif
 
 %if %{with python3}
 %py3_build %{?with_tests:test}
-%{?with_python3_tests:%{__python3} testr init && %{__python3} testr run --parallel}
+%{?with_python3_tests:%{__python3} testr init && %{__python3} testr run}
 %endif
 
 %install
