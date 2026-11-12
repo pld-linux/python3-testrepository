@@ -1,18 +1,18 @@
 #
 # Conditional build:
-%bcond_without	doc	# Sphinx documentation
-%bcond_with	tests	# testr (python 2 only because of bzr dependency, broken as of 0.0.20)
+%bcond_without	doc	# mdBook documentation
+%bcond_without	tests	# unit tests
 
 Summary:	A repository of test results
 Summary(pl.UTF-8):	Repozytorium wyników testów
 Name:		python3-testrepository
-Version:	0.0.21
+Version:	0.0.22
 Release:	1
 License:	Apache v2.0 or BSD
 Group:		Libraries/Python
 #Source0Download: https://pypi.org/simple/testrepository/
 Source0:	https://pypi.org/packages/source/t/testrepository/testrepository-%{version}.tar.gz
-# Source0-md5:	50de57ec17ad9fcfd02d6d9d4e5860ca
+# Source0-md5:	02b83bc2426b5a124c12e93065c8a92d
 URL:		https://launchpad.net/testrepository
 BuildRequires:	python3-build
 BuildRequires:	python3-hatch-vcs
@@ -23,7 +23,6 @@ BuildRequires:	python3-setuptools >= 1:61
 %if %{with tests}
 BuildRequires:	python3-fixtures
 BuildRequires:	python3-iso8601
-BuildRequires:	python3-pytz
 BuildRequires:	python3-subunit >= 0.0.18
 BuildRequires:	python3-testresources
 BuildRequires:	python3-testscenarios
@@ -32,7 +31,7 @@ BuildRequires:	python3-testtools >= 0.9.30
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.714
 %if %{with doc}
-BuildRequires:	sphinx-pdg-3
+BuildRequires:	mdbook
 %endif
 Requires:	python3-modules >= 1:3.2
 Conflicts:	python-testrepository < 0.0.20-12
@@ -82,15 +81,15 @@ Dokumentacja API modułu Pythona testrepository.
 %py3_build_pyproject
 
 %if %{with tests}
-./testr init
-
-PYTHON=%{__python3} \
-./testr run
+# tests create temporary repositories in $HOME
+install -d test-home
+HOME=$(pwd)/test-home \
+PYTHONPATH=$(pwd) \
+%{__python3} -m testtools.run testrepository.tests.test_suite
 %endif
 
 %if %{with doc}
-%{__make} -C doc html \
-	SPHINXBUILD=sphinx-build-3
+mdbook build doc
 %endif
 
 %install
@@ -108,7 +107,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS BSD COPYING NEWS README.rst
+%doc Apache-2.0 BSD COPYING NEWS README.md
 %attr(755,root,root) %{_bindir}/testr
 %attr(755,root,root) %{_bindir}/testr-3
 %{py3_sitescriptdir}/testrepository
@@ -117,5 +116,5 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with doc}
 %files apidocs
 %defattr(644,root,root,755)
-%doc doc/_build/html/{_static,*.html,*.js}
+%doc doc/book/*
 %endif
